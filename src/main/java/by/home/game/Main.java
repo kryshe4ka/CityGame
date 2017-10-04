@@ -1,6 +1,8 @@
 package by.home.game;
 
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Main {
 
@@ -8,6 +10,8 @@ public class Main {
 		// Инициализируем начальные парметры и игру
 		Scanner in = new Scanner(System.in);
 		String city = "";
+		Pattern pattern = Pattern.compile("[A-Za-z]{1,}");
+		Matcher matcher;
 		Game game = newGame();
 		// Выводим список доступных городов. Дополнить можно в классе Player
 		System.out.println(game.getPlayer());
@@ -15,6 +19,9 @@ public class Main {
 		while (game.isStatus()) {
 			System.out.println("Введите город (pass - если не знаешь, exit - для выхода):");
 			city = in.next(); //вводим город с клавиатуры
+			matcher = pattern.matcher(city);
+			boolean matches = matcher.matches(); 
+			
 			if (city.equalsIgnoreCase("exit")) {
 				System.out.println("Вы завершили игру!");
 				game.setStatus(false);
@@ -23,13 +30,14 @@ public class Main {
 				game.setStatus(false);
 			} else {
 				int index; //инициализируем индекс, равный позиции города в списке, -1 при отсутствии в списке
+				
 				if (lastCharStr == "") {
 					index = game.isCityExist(city); //при старте игры проверяем, есть ли город в списке и возвращаем позицию
 				} else {
 					index = game.isCityExist(city, lastCharStr); //проверяем наличие города в списке и равенство первой буквы необходимой
 				}
-				if (index == -1) {
-					System.out.println("Чувак, ты ввел неверный город, введи другой или проваливай! (pass/exit)"); //если город не найден или неверная первая буква
+				if (matches == false) {
+					System.out.println("Введены неверные символы");// Корректность ввода символов	
 				} else {
 					Character lastChar = getLastChar(city); //сохраняем последнюю букву введенного города
 					game.getPlayer().getCitiesList().remove(index); //удаляем город из списка, чтобы исключить повторения
